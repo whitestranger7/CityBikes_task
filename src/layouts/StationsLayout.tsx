@@ -1,20 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axios from '../config/axios';
 
 import { Station } from '../components/Station';
 
 interface IStationsLayout {
   id: string | undefined;
-  onSectionClick: (id: string) => void;
-  liked: string[];
 }
 
-export const StationsLayout = ({
-  id,
-  onSectionClick,
-  liked,
-}: IStationsLayout) => {
+export const StationsLayout = ({ id }: IStationsLayout) => {
   const [data, setData] = useState<any>();
+
+  const likedStorageRef: string | null = localStorage.getItem('liked');
+  const likedStorage: string[] = likedStorageRef
+    ? JSON.parse(likedStorageRef)
+    : [];
+
+  const [liked, setLiked] = useState(likedStorage);
+
+  useEffect(() => {
+    localStorage.setItem('liked', JSON.stringify(liked));
+  }, [liked]);
 
   useEffect(() => {
     if (id) {
@@ -28,6 +33,20 @@ export const StationsLayout = ({
     }
   }, [id]);
 
+  const likeHandler = useCallback(
+    (id) => {
+      const newLikedArr = liked.slice();
+      if (liked.includes(id)) {
+        const newLikedData = newLikedArr.filter((el) => el !== id);
+        setLiked(newLikedData);
+      } else {
+        newLikedArr.push(id);
+        setLiked(newLikedArr);
+      }
+    },
+    [liked]
+  );
+
   return (
     <>
       {data ? (
@@ -39,7 +58,7 @@ export const StationsLayout = ({
             <Station
               key={index}
               name={el.name}
-              onClick={() => onSectionClick(el.id)}
+              onClick={() => likeHandler(el.id)}
               bikesNumber={el.free_bikes}
               liked={liked.includes(el.id) ? true : false}
             />
