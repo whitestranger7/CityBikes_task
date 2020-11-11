@@ -5,7 +5,6 @@ import axios from './config/axios';
 import { NetworksLayout } from './layouts/NetworksLayout';
 import { StationsLayout } from './layouts/StationsLayout';
 import { INetworks } from './interfaces/INetworks';
-import { Network } from './components/Network';
 
 export const App = () => {
   const [networks, setNetworks] = useState<INetworks>({
@@ -17,7 +16,12 @@ export const App = () => {
     },
   });
 
-  const [liked, setLiked] = useState<string[]>([]);
+  const likedStorageRef: string | null = localStorage.getItem('liked');
+  const likedStorage: string[] = likedStorageRef
+    ? JSON.parse(likedStorageRef)
+    : [];
+
+  const [liked, setLiked] = useState(likedStorage);
 
   useEffect(() => {
     if (networks.items.length === 0) {
@@ -35,6 +39,10 @@ export const App = () => {
     }
   }, [networks]);
 
+  useEffect(() => {
+    localStorage.setItem('liked', JSON.stringify(liked));
+  }, [liked]);
+
   const clickHandler = useCallback(
     (index, id) => {
       setNetworks({ ...networks, selected: { index, id } });
@@ -44,13 +52,13 @@ export const App = () => {
 
   const likeHandler = useCallback(
     (id) => {
-      let newData = liked.slice();
+      const newLikedArr = liked.slice();
       if (liked.includes(id)) {
-        const filteredData = newData.filter((el) => el !== id);
-        setLiked(filteredData);
+        const newLikedData = newLikedArr.filter((el) => el !== id);
+        setLiked(newLikedData);
       } else {
-        newData.push(id);
-        setLiked(newData);
+        newLikedArr.push(id);
+        setLiked(newLikedArr);
       }
     },
     [liked]
