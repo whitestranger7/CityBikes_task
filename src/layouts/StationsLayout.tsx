@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from '../config/axios';
+import Loader from 'react-loader-spinner';
+import styles from '../styles/stations.module.scss';
 
 import { Station } from '../components/Station';
 
@@ -65,7 +67,9 @@ export const StationsLayout = ({ id }: IStationsLayout) => {
           )
         )
       ) : (
-        <div>Loading...</div>
+        <div className={styles.stations__preloader}>
+          <Loader type='Oval' color='#00BFFF' height={80} width={80} />
+        </div>
       )}
     </>
   );
