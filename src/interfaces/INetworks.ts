@@ -1,5 +1,8 @@
 export interface INetworks {
   items: object[];
   hasMoreItems: boolean;
-  selected: number;
+  selected: {
+    index: number;
+    id: string;
+  };
 }

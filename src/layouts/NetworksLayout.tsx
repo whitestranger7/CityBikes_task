@@ -1,11 +1,10 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import axios from '../config/axios';
+import React from 'react';
 
 import { Network } from '../components/Network';
 
 interface INetworks {
   networks: object[];
-  clickHandler: (index: number) => void;
+  clickHandler: (index: number, id: string) => void;
   selected: number;
 }
 
@@ -15,10 +14,10 @@ export const NetworksLayout = ({
   selected,
 }: INetworks) => {
   return (
-    <div className='tracks'>
+    <div>
       {networks.map((el: any, index: number) => (
         <Network
-          onClick={() => clickHandler(index)}
+          onClick={() => clickHandler(index, el.id)}
           key={index}
           names={el.company}
           selected={selected === index ? true : false}
